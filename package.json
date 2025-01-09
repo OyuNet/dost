@@ -2,6 +2,9 @@
   "name": "dost",
   "module": "index.js",
   "type": "module",
+  "scripts": {
+    "build": "bun build index.js --compile --outfile dist/dost"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

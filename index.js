@@ -1,3 +1,5 @@
+#!/usr/bin/env bun
+
 import fs from "fs";
 import { brotliCompressSync, brotliDecompressSync, constants } from "zlib";
 import { program } from "commander";
