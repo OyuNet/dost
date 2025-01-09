@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import fs from "fs";
-import { compress, decompress } from "./index.js"; // Adjust the path as needed
+import { compress, decompress } from "./index.js";
 
 // Test Helpers
 const createTestFile = (fileName, content) => {
