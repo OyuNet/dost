@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -26,18 +26,23 @@ jobs:
 
       - name: Build Binary
         run: |
-          bun build index.js --compile --outfile dost-${{ matrix.os }}-${{ runner.os }}${{ runner.os == 'Windows' && '.exe' || '' }}
+          bun build index.js --compile --outfile dost-${{ matrix.os }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+        shell: bash
 
-      - name: Upload Build Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: dost-${{ matrix.os }}-${{ runner.os }}
-          path: dost-${{ matrix.os }}-${{ runner.os }}${{ runner.os == 'Windows' && '.exe' || '' }}
+          name: dost-${{ matrix.os }}
+          path: dost-${{ matrix.os }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
 
   release:
-    needs: build-and-release
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -58,6 +63,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/dost-*
-          asset_name: dost-${{ matrix.os }}-${{ runner.os }}${{ runner.os == 'Windows' && '.exe' || '' }}
+          asset_path: ./artifacts/*
+          asset_name: ${{ matrix.os }}-dost${{ matrix.os == 'windows-latest' && '.exe' || '' }}
           asset_content_type: application/octet-stream
