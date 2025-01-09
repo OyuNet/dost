@@ -12,7 +12,7 @@ const BROTLI_OPTIONS = {
  * Compresses a file using Brotli and saves the compressed data along with metadata.
  * @param {string} filePath - The path to the file to compress.
  */
-function compress(filePath) {
+export function compress(filePath) {
   const fileName = filePath.split("/").pop(); // Extract the file name
   const fileData = fs.readFileSync(filePath); // Read the file content
   const compressedData = brotliCompressSync(fileData, {
@@ -35,7 +35,7 @@ function compress(filePath) {
  * Decompresses a `.dost` file, restores the original file content, and saves it.
  * @param {string} filePath - The path to the `.dost` file to decompress.
  */
-function decompress(filePath) {
+export function decompress(filePath) {
   const fileData = fs.readFileSync(filePath); // Read the compressed file
 
   // Extract the metadata length (first 8 bytes)
@@ -55,12 +55,17 @@ function decompress(filePath) {
   console.log(`Decompression completed: ${metaData.fileName}`);
 }
 
-// Configure CLI commands
-program.command("comp <file>").description("Compress a file").action(compress);
+// CLI commands are executed only if this file is run directly
+if (import.meta.main) {
+  program
+    .command("comp <file>")
+    .description("Compress a file")
+    .action(compress);
 
-program
-  .command("decomp <file>")
-  .description("Decompress a file")
-  .action(decompress);
+  program
+    .command("decomp <file>")
+    .description("Decompress a file")
+    .action(decompress);
 
-program.parse();
+  program.parse();
+}
